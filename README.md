@@ -31,6 +31,30 @@ This study presents the first comprehensive comparison between YOLOv12 and YOLOv
 | YOLOv12 + SDPA | 76.7% | 46.1% | 81.6% | 66.4% | **55.3 min** |
 | YOLOv12 + Flash | 76.5% | 47.9% | 83.1% | 63.2% | 67.3 min |
 
+## 🖼️ Exemples Visuels
+
+### Prédictions sur des images de validation
+
+| YOLOv12 + Flash | YOLOv12 + SDPA | YOLOv13 + Flash | YOLOv13 + SDPA |
+|:---------------:|:--------------:|:---------------:|:--------------:|
+| ![YOLOv12 Flash](examples/predictions/yolov12_flash_predictions.jpg) | ![YOLOv12 SDPA](examples/predictions/yolov12_sdpa_predictions.jpg) | ![YOLOv13 Flash](examples/predictions/yolov13_flash_predictions.jpg) | ![YOLOv13 SDPA](examples/predictions/yolov13_sdpa_predictions.jpg) |
+
+### Exemples de courbes d'apprentissage
+
+- **Comparaison mAP50**  
+  ![Comparaison mAP50](figures/mAP_comparison.png)
+
+- **Courbes d'apprentissage (loss, précision, rappel)**  
+  ![Courbes d'apprentissage](figures/training_curves.png)
+
+### Comparaison des mécanismes d'attention
+
+- ![Comparaison Attention](figures/attention_comparison.png)
+
+### Analyse de la mémoire
+
+- ![Analyse mémoire](figures/memory_usage.png)
+
 ## 🏗️ Repository Structure
 
 ```
