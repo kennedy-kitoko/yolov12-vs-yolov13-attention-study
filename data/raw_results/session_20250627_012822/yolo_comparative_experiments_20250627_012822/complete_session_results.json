@@ -1,0 +1,139 @@
+{
+    "session_info": {
+        "session_id": "20250627_012822",
+        "start_time": "2025-06-27T01:28:22.191786",
+        "researcher": "Kennedy Kitoko \ud83c\udde8\ud83c\udde9",
+        "experiment_type": "YOLOv12 vs YOLOv13 - SDPA vs Flash Attention Comprehensive Comparison",
+        "dataset_used": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3"
+    },
+    "validation_results": {
+        "checks": {
+            "python_ok": true,
+            "torch_ok": true,
+            "cuda_ok": true,
+            "ultralytics_ok": true,
+            "flash_attn_ok": true,
+            "pillow_ok": true,
+            "dataset_ok": true,
+            "yolov12_weights_ok": true,
+            "yolov13_weights_ok": true,
+            "sdpa_backends_ok": true
+        },
+        "ready_for_experiments": true,
+        "critical_passed": 5,
+        "total_passed": 10
+    },
+    "experiments": {
+        "yolov12_sdpa": {},
+        "yolov12_flash": {},
+        "yolov13_sdpa": {},
+        "yolov13_flash": {
+            "success": true,
+            "model_version": "yolov13",
+            "attention_type": "flash",
+            "duration_seconds": 3939.560397386551,
+            "duration_minutes": 65.65933995644251,
+            "config": {
+                "model": "yolov13n.pt",
+                "data": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3/data.yaml",
+                "epochs": 20,
+                "batch": 8,
+                "imgsz": 640,
+                "device": "cuda:0",
+                "amp": true,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "lrf": 0.01,
+                "momentum": 0.937,
+                "weight_decay": 0.0005,
+                "warmup_epochs": 3,
+                "warmup_momentum": 0.8,
+                "warmup_bias_lr": 0.1,
+                "patience": 50,
+                "project": "yolo_comparative_experiments_20250627_012822",
+                "name": "yolov13_flash",
+                "save_period": 25,
+                "workers": 8,
+                "cache": "ram",
+                "rect": true,
+                "cos_lr": true,
+                "close_mosaic": 10,
+                "resume": false,
+                "overlap_mask": true,
+                "mask_ratio": 4,
+                "dropout": 0.0,
+                "verbose": true,
+                "multi_scale": true,
+                "copy_paste": 0.1,
+                "mixup": 0.1,
+                "hsv_h": 0.015,
+                "hsv_s": 0.7,
+                "hsv_v": 0.4,
+                "degrees": 0.0,
+                "translate": 0.1,
+                "scale": 0.5,
+                "shear": 0.0,
+                "perspective": 0.0,
+                "flipud": 0.0,
+                "fliplr": 0.5,
+                "mosaic": 1.0
+            },
+            "metrics": {
+                "mAP50": 0.8233638823936658,
+                "mAP50_95": 0.5231637160532948,
+                "precision": 0.8938250950312353,
+                "recall": 0.683695652173913,
+                "fitness": 0.5231637160532948
+            },
+            "performance": {
+                "memory_start_mb": 472.09375,
+                "memory_end_mb": 8836.453125,
+                "memory_used_mb": 8364.359375,
+                "gpu_memory_start_gb": 0.0,
+                "gpu_memory_end_gb": 0.248391168,
+                "gpu_memory_used_gb": 0.248391168,
+                "total_gpu_memory_gb": 8.585216
+            },
+            "results_path": "yolo_comparative_experiments_20250627_012822/yolov13_flash",
+            "best_weights": "yolo_comparative_experiments_20250627_012822/yolov13_flash/weights/best.pt",
+            "timestamp": "2025-06-27T02:34:06.750369"
+        }
+    },
+    "comparative_analysis": {
+        "timestamp": "2025-06-27T02:34:06.965765",
+        "successful_experiments": [
+            "yolov13_flash"
+        ],
+        "failed_experiments": [
+            "yolov12_sdpa",
+            "yolov12_flash",
+            "yolov13_sdpa"
+        ],
+        "model_comparison": {},
+        "attention_comparison": {},
+        "performance_ranking": [
+            {
+                "experiment": "yolov13_flash",
+                "mAP50": 0.8233638823936658,
+                "mAP50_95": 0.5231637160532948,
+                "duration_minutes": 65.65933995644251,
+                "memory_used_mb": 8364.359375,
+                "gpu_memory_used_gb": 0.248391168
+            }
+        ],
+        "recommendations": [
+            "Meilleure configuration: yolov13_flash",
+            "mAP50 optimale: 0.823",
+            "Dur\u00e9e d'entra\u00eenement: 65.7 minutes"
+        ]
+    },
+    "session_summary": {
+        "session_duration_minutes": 65.74633561666667,
+        "total_experiments": 4,
+        "successful_experiments": 1,
+        "failed_experiments": 3,
+        "validation_success": true,
+        "dataset_used": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3",
+        "research_success": true
+    }
+}

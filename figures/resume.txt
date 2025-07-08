@@ -1,0 +1,72 @@
+(flash-attention) kennedy@kennedy-kitoko:/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn$ python visuelle.py
+🔬 ANALYSEUR EXPÉRIENCES YOLO
+🎯 YOLOv12 vs YOLOv13 - SDPA vs Flash Attention
+🇨🇩 Kennedy Kitoko - Agricultural AI Innovation
+============================================================
+🚀 DÉMARRAGE ANALYSE COMPLÈTE
+============================================================
+📊 Chargement des données expérimentales...
+✅ 4 expériences chargées
+📈 DataFrame créé: 4 expériences réussies
+
+🔬 ANALYSE STATISTIQUE COMPLÈTE
+==================================================
+
+📊 Statistiques Descriptives:
+       mAP50  mAP50_95  precision  recall  duration_min
+count   4.00      4.00       4.00    4.00          4.00
+mean   79.62     48.44      83.03   67.86         61.71
+std     3.47      2.69       4.75    4.33          5.72
+min    76.53     46.13      78.00   63.15         55.31
+25%    76.67     47.08      80.71   65.60         57.75
+50%    79.53     47.66      82.36   67.39         62.11
+75%    82.48     49.02      84.68   69.65         66.08
+max    82.90     52.32      89.38   73.50         67.32
+
+🏆 COMPARAISON PAR MODÈLE:
+         mAP50  mAP50_95  precision  recall
+model
+yolov12  76.63     47.03      82.36   64.78
+yolov13  82.62     49.86      83.69   70.93
+
+📈 Améliorations YOLOv13 vs YOLOv12:
+   mAP50: +5.99%
+   mAP50_95: +2.83%
+   precision: +1.33%
+   recall: +6.15%
+
+⚡ COMPARAISON PAR ATTENTION:
+           mAP50  mAP50_95  precision  recall
+attention
+flash      79.44     50.12      86.25   65.76
+sdpa       79.81     46.77      79.80   69.96
+
+⏱️ EFFICACITÉ (mAP50/temps):
+      experiment   mAP50  duration_min  efficiency
+3   yolov13_sdpa  82.900        58.560       1.416
+0   yolov12_sdpa  76.720        55.307       1.387
+2  yolov13_flash  82.336        65.659       1.254
+1  yolov12_flash  76.534        67.325       1.137
+
+🎨 Génération des visualisations...
+✅ Visualisations sauvegardées dans figures/
+
+✅ ANALYSE COMPLÈTE TERMINÉE
+📁 Fichiers générés:
+   - figures/ (tous les graphiques)
+   - analysis_report.md
+   - consolidated_results.csv
+
+🏆 RÉSULTATS CLÉS:
+🥇 Meilleure config: YOLOV13 + SDPA
+📈 mAP50 optimal: 82.90%
+⏱️ Temps: 58.6 minutes
+
+📊 Analyse sauvegardée avec succès!
+
+============================================================
+🇨🇩 Kennedy Kitoko - Agricultural AI Innovation
+🌍 Democratizing AI for Global Agriculture
+🔬 Scientific Analysis Framework
+============================================================
+(flash-attention) kennedy@kennedy-kitoko:/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn$ 

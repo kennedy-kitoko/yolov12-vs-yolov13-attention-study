@@ -1,0 +1,153 @@
+{
+    "session_info": {
+        "project_name": "YOLOv12 vs YOLOv13 Attention Study",
+        "researcher": "Kennedy Kitoko 🇨🇩",
+        "institution": "Agricultural AI Innovation Lab",
+        "date_range": "2025-06-26 to 2025-06-27",
+        "total_experiments": 4,
+        "successful_experiments": 4
+    },
+    "hardware_specs": {
+        "cpu": "AMD Ryzen 9 7945HX (12 cores)",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU (8188 MiB)",
+        "ram": "39 GB available",
+        "driver": "NVIDIA 576.57",
+        "cuda": "11.8",
+        "storage": "899 GB free"
+    },
+    "software_environment": {
+        "python": "3.11.0",
+        "pytorch": "2.2.2+cu118",
+        "flash_attention": "2.7.3",
+        "ultralytics": "8.3.63",
+        "os": "Linux (WSL2)"
+    },
+    "dataset_info": {
+        "name": "Weeds-3",
+        "path": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3",
+        "train_images": 3664,
+        "val_images": 359,
+        "classes": "Agricultural weed detection",
+        "format": "YOLO annotation format"
+    },
+    "experiments": {
+        "yolov12_sdpa": {
+            "success": true,
+            "model_version": "yolov12",
+            "attention_type": "sdpa",
+            "metrics": {
+                "mAP50": 0.7672,
+                "mAP50_95": 0.4613,
+                "precision": 0.8161,
+                "recall": 0.6641,
+                "fitness": 0.4613
+            },
+            "performance": {
+                "duration_minutes": 55.31,
+                "gpu_memory_gb": 0.219,
+                "cpu_memory_mb": 8394,
+                "training_speed_it_per_sec": 3.15
+            },
+            "config": {
+                "epochs": 20,
+                "batch": 8,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "device": "cuda:0",
+                "amp": true
+            }
+        },
+        "yolov12_flash": {
+            "success": true,
+            "model_version": "yolov12",
+            "attention_type": "flash",
+            "metrics": {
+                "mAP50": 0.7653,
+                "mAP50_95": 0.4792,
+                "precision": 0.8311,
+                "recall": 0.6315,
+                "fitness": 0.4792
+            },
+            "performance": {
+                "duration_minutes": 67.32,
+                "gpu_memory_gb": 0.052,
+                "cpu_memory_mb": 3406,
+                "training_speed_it_per_sec": 3.28
+            },
+            "config": {
+                "epochs": 20,
+                "batch": 8,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "device": "cuda:0",
+                "amp": true
+            }
+        },
+        "yolov13_sdpa": {
+            "success": true,
+            "model_version": "yolov13",
+            "attention_type": "sdpa",
+            "metrics": {
+                "mAP50": 0.829,
+                "mAP50_95": 0.474,
+                "precision": 0.78,
+                "recall": 0.735,
+                "fitness": 0.474
+            },
+            "performance": {
+                "duration_minutes": 58.56,
+                "gpu_memory_gb": 0.25,
+                "cpu_memory_mb": 8400,
+                "training_speed_it_per_sec": 2.75
+            },
+            "config": {
+                "epochs": 20,
+                "batch": 8,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "device": "cuda:0",
+                "amp": true
+            }
+        },
+        "yolov13_flash": {
+            "success": true,
+            "model_version": "yolov13",
+            "attention_type": "flash",
+            "metrics": {
+                "mAP50": 0.8234,
+                "mAP50_95": 0.5232,
+                "precision": 0.8938,
+                "recall": 0.6837,
+                "fitness": 0.5232
+            },
+            "performance": {
+                "duration_minutes": 65.66,
+                "gpu_memory_gb": 0.248,
+                "cpu_memory_mb": 8364,
+                "training_speed_it_per_sec": 2.65
+            },
+            "config": {
+                "epochs": 20,
+                "batch": 8,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "device": "cuda:0",
+                "amp": true
+            }
+        }
+    },
+    "analysis": {
+        "best_configuration": "yolov13_sdpa",
+        "best_map50": 0.829,
+        "yolov13_improvement_over_yolov12": {
+            "map50_average": 0.062,
+            "precision_average": 0.013,
+            "recall_average": 0.062
+        },
+        "flash_vs_sdpa": {
+            "flash_precision_advantage": 0.051,
+            "sdpa_map50_advantage": 0.004,
+            "sdpa_speed_advantage_minutes": 8.1
+        }
+    }
+}

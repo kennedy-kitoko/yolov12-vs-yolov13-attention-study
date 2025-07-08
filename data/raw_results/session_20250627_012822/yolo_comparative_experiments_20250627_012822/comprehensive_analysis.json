@@ -1,0 +1,28 @@
+{
+    "timestamp": "2025-06-27T02:34:06.965765",
+    "successful_experiments": [
+        "yolov13_flash"
+    ],
+    "failed_experiments": [
+        "yolov12_sdpa",
+        "yolov12_flash",
+        "yolov13_sdpa"
+    ],
+    "model_comparison": {},
+    "attention_comparison": {},
+    "performance_ranking": [
+        {
+            "experiment": "yolov13_flash",
+            "mAP50": 0.8233638823936658,
+            "mAP50_95": 0.5231637160532948,
+            "duration_minutes": 65.65933995644251,
+            "memory_used_mb": 8364.359375,
+            "gpu_memory_used_gb": 0.248391168
+        }
+    ],
+    "recommendations": [
+        "Meilleure configuration: yolov13_flash",
+        "mAP50 optimale: 0.823",
+        "Dur\u00e9e d'entra\u00eenement: 65.7 minutes"
+    ]
+}

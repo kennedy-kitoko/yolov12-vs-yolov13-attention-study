@@ -1,0 +1,54 @@
+{
+    "timestamp": "2025-06-26T21:48:20.306101",
+    "successful_experiments": [
+        "yolov12_sdpa",
+        "yolov12_flash"
+    ],
+    "failed_experiments": [
+        "yolov13_sdpa",
+        "yolov13_flash"
+    ],
+    "model_comparison": {},
+    "attention_comparison": {
+        "sdpa_average": {
+            "mAP50": 0.7671974573088917,
+            "mAP50_95": 0.46130629823030944,
+            "duration_minutes": 55.30739711523056,
+            "memory_used_mb": 8394.328125,
+            "gpu_memory_used_gb": 0.218558464
+        },
+        "flash_average": {
+            "mAP50": 0.7653378494108363,
+            "mAP50_95": 0.47922176554342777,
+            "duration_minutes": 67.32496747175853,
+            "memory_used_mb": 3405.97265625,
+            "gpu_memory_used_gb": 0.05179852800000001
+        },
+        "winner": "sdpa",
+        "mAP_difference": 0.0018596078980553932,
+        "speed_difference_minutes": 12.017570356527969
+    },
+    "performance_ranking": [
+        {
+            "experiment": "yolov12_sdpa",
+            "mAP50": 0.7671974573088917,
+            "mAP50_95": 0.46130629823030944,
+            "duration_minutes": 55.30739711523056,
+            "memory_used_mb": 8394.328125,
+            "gpu_memory_used_gb": 0.218558464
+        },
+        {
+            "experiment": "yolov12_flash",
+            "mAP50": 0.7653378494108363,
+            "mAP50_95": 0.47922176554342777,
+            "duration_minutes": 67.32496747175853,
+            "memory_used_mb": 3405.97265625,
+            "gpu_memory_used_gb": 0.05179852800000001
+        }
+    ],
+    "recommendations": [
+        "Meilleure configuration: yolov12_sdpa",
+        "mAP50 optimale: 0.767",
+        "Dur\u00e9e d'entra\u00eenement: 55.3 minutes"
+    ]
+}

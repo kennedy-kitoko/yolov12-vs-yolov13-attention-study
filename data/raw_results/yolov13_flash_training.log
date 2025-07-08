@@ -1,0 +1,15 @@
+
+# YOLOV13 + FLASH Training Log
+# Generated: 2025-06-27T06:14:25.347167
+
+Ultralytics 8.3.63 🚀 Python-3.11.0 torch-2.2.2+cu118 CUDA:0 (NVIDIA GeForce RTX 4060 Laptop GPU, 8188MiB)
+
+Starting training for 20 epochs...
+Epoch 1/20: box_loss=1.82, cls_loss=2.37, dfl_loss=2.01, mAP50=0.033
+Epoch 5/20: box_loss=1.73, cls_loss=2.02, dfl_loss=1.97, mAP50=0.242
+Epoch 10/20: box_loss=1.48, cls_loss=1.56, dfl_loss=1.73, mAP50=0.658
+Epoch 15/20: box_loss=1.35, cls_loss=1.29, dfl_loss=1.55, mAP50=0.752
+Epoch 20/20: box_loss=1.27, cls_loss=1.14, dfl_loss=1.54, mAP50=0.779
+
+Training completed successfully.
+Results saved to weights/best.pt

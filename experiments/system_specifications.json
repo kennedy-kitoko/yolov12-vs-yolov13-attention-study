@@ -1,0 +1,39 @@
+{
+    "collection_date": "2025-06-27T06:14:27.387877",
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "architecture": [
+        "64bit",
+        "ELF"
+    ],
+    "processor": "x86_64",
+    "hardware": {
+        "cpu": "AMD Ryzen 9 7945HX with Radeon Graphics",
+        "cpu_cores": 12,
+        "cpu_threads": 12,
+        "ram_total_gb": 39,
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "gpu_memory_mb": 8188,
+        "gpu_driver": "576.57",
+        "storage_free_gb": 899,
+        "ram_available_gb": 39.9,
+        "cpu_freq_mhz": 2495.2619999999997,
+        "disk_usage": {
+            "total_gb": 1081.1,
+            "used_gb": 61.6,
+            "free_gb": 964.6,
+            "percent": 6.0
+        }
+    },
+    "software": {
+        "python_version": "3.11.0",
+        "pytorch_version": "2.2.2+cu118",
+        "cuda_version": "11.8",
+        "flash_attention_version": "2.7.3",
+        "ultralytics_version": "8.3.63",
+        "conda_env": "flash-attention",
+        "pytorch_actual": "2.2.2+cu118",
+        "cuda_available": true,
+        "cuda_device_count": 1,
+        "cuda_device_name": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    }
+}

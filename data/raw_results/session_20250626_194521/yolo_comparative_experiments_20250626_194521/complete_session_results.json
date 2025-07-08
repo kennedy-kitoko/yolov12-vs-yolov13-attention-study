@@ -1,0 +1,257 @@
+{
+    "session_info": {
+        "session_id": "20250626_194521",
+        "start_time": "2025-06-26T19:45:21.063879",
+        "researcher": "Kennedy Kitoko \ud83c\udde8\ud83c\udde9",
+        "experiment_type": "YOLOv12 vs YOLOv13 - SDPA vs Flash Attention Comprehensive Comparison",
+        "dataset_used": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3"
+    },
+    "validation_results": {
+        "checks": {
+            "python_ok": true,
+            "torch_ok": true,
+            "cuda_ok": true,
+            "ultralytics_ok": true,
+            "flash_attn_ok": true,
+            "pillow_ok": true,
+            "dataset_ok": true,
+            "yolov12_weights_ok": true,
+            "yolov13_weights_ok": true,
+            "sdpa_backends_ok": true
+        },
+        "ready_for_experiments": true,
+        "critical_passed": 5,
+        "total_passed": 10
+    },
+    "experiments": {
+        "yolov12_sdpa": {
+            "success": true,
+            "model_version": "yolov12",
+            "attention_type": "sdpa",
+            "duration_seconds": 3318.4438269138336,
+            "duration_minutes": 55.30739711523056,
+            "config": {
+                "model": "yolo12n.pt",
+                "data": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3/data.yaml",
+                "epochs": 20,
+                "batch": 8,
+                "imgsz": 640,
+                "device": "cuda:0",
+                "amp": true,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "lrf": 0.01,
+                "momentum": 0.937,
+                "weight_decay": 0.0005,
+                "warmup_epochs": 3,
+                "warmup_momentum": 0.8,
+                "warmup_bias_lr": 0.1,
+                "patience": 50,
+                "project": "yolo_comparative_experiments_20250626_194521",
+                "name": "yolov12_sdpa",
+                "save_period": 25,
+                "workers": 8,
+                "cache": "ram",
+                "rect": true,
+                "cos_lr": true,
+                "close_mosaic": 10,
+                "resume": false,
+                "overlap_mask": true,
+                "mask_ratio": 4,
+                "dropout": 0.0,
+                "verbose": true,
+                "multi_scale": true,
+                "copy_paste": 0.1,
+                "mixup": 0.1,
+                "hsv_h": 0.015,
+                "hsv_s": 0.7,
+                "hsv_v": 0.4,
+                "degrees": 0.0,
+                "translate": 0.1,
+                "scale": 0.5,
+                "shear": 0.0,
+                "perspective": 0.0,
+                "flipud": 0.0,
+                "fliplr": 0.5,
+                "mosaic": 1.0
+            },
+            "metrics": {
+                "mAP50": 0.7671974573088917,
+                "mAP50_95": 0.46130629823030944,
+                "precision": 0.8160868313228323,
+                "recall": 0.6641304347826087,
+                "fitness": 0.46130629823030944
+            },
+            "performance": {
+                "memory_start_mb": 472.3828125,
+                "memory_end_mb": 8866.7109375,
+                "memory_used_mb": 8394.328125,
+                "gpu_memory_start_gb": 0.0,
+                "gpu_memory_end_gb": 0.218558464,
+                "gpu_memory_used_gb": 0.218558464,
+                "total_gpu_memory_gb": 8.585216
+            },
+            "results_path": "yolo_comparative_experiments_20250626_194521/yolov12_sdpa",
+            "best_weights": "yolo_comparative_experiments_20250626_194521/yolov12_sdpa/weights/best.pt",
+            "timestamp": "2025-06-26T20:40:43.118630"
+        },
+        "yolov12_flash": {
+            "success": true,
+            "model_version": "yolov12",
+            "attention_type": "flash",
+            "duration_seconds": 4039.4980483055115,
+            "duration_minutes": 67.32496747175853,
+            "config": {
+                "model": "yolo12n.pt",
+                "data": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3/data.yaml",
+                "epochs": 20,
+                "batch": 8,
+                "imgsz": 640,
+                "device": "cuda:0",
+                "amp": true,
+                "optimizer": "AdamW",
+                "lr0": 0.001,
+                "lrf": 0.01,
+                "momentum": 0.937,
+                "weight_decay": 0.0005,
+                "warmup_epochs": 3,
+                "warmup_momentum": 0.8,
+                "warmup_bias_lr": 0.1,
+                "patience": 50,
+                "project": "yolo_comparative_experiments_20250626_194521",
+                "name": "yolov12_flash",
+                "save_period": 25,
+                "workers": 8,
+                "cache": "ram",
+                "rect": true,
+                "cos_lr": true,
+                "close_mosaic": 10,
+                "resume": false,
+                "overlap_mask": true,
+                "mask_ratio": 4,
+                "dropout": 0.0,
+                "verbose": true,
+                "multi_scale": true,
+                "copy_paste": 0.1,
+                "mixup": 0.1,
+                "hsv_h": 0.015,
+                "hsv_s": 0.7,
+                "hsv_v": 0.4,
+                "degrees": 0.0,
+                "translate": 0.1,
+                "scale": 0.5,
+                "shear": 0.0,
+                "perspective": 0.0,
+                "flipud": 0.0,
+                "fliplr": 0.5,
+                "mosaic": 1.0
+            },
+            "metrics": {
+                "mAP50": 0.7653378494108363,
+                "mAP50_95": 0.47922176554342777,
+                "precision": 0.8311082838407587,
+                "recall": 0.6315217391304347,
+                "fitness": 0.47922176554342777
+            },
+            "performance": {
+                "memory_start_mb": 6717.140625,
+                "memory_end_mb": 10123.11328125,
+                "memory_used_mb": 3405.97265625,
+                "gpu_memory_start_gb": 0.1650432,
+                "gpu_memory_end_gb": 0.216841728,
+                "gpu_memory_used_gb": 0.05179852800000001,
+                "total_gpu_memory_gb": 8.585216
+            },
+            "results_path": "yolo_comparative_experiments_20250626_194521/yolov12_flash",
+            "best_weights": "yolo_comparative_experiments_20250626_194521/yolov12_flash/weights/best.pt",
+            "timestamp": "2025-06-26T21:48:08.137914"
+        },
+        "yolov13_sdpa": {
+            "success": false,
+            "model_version": "yolov13",
+            "attention_type": "sdpa",
+            "error": "[Errno 2] No such file or directory: 'yolo13n.pt'",
+            "traceback": "Traceback (most recent call last):\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/comprehensive_yolo_experiments.py\", line 390, in run_yolo_experiment\n    model = YOLO(config['model'])\n            ^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/models/yolo/model.py\", line 23, in __init__\n    super().__init__(model=model, task=task, verbose=verbose)\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/engine/model.py\", line 148, in __init__\n    self._load(model, task=task)\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/engine/model.py\", line 291, in _load\n    self.model, self.ckpt = attempt_load_one_weight(weights)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/nn/tasks.py\", line 914, in attempt_load_one_weight\n    ckpt, weight = torch_safe_load(weight)  # load ckpt\n                   ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/nn/tasks.py\", line 841, in torch_safe_load\n    ckpt = torch.load(file, map_location=\"cpu\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/utils/patches.py\", line 86, in torch_load\n    return _torch_load(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 998, in load\n    with _open_file_like(f, 'rb') as opened_file:\n         ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 445, in _open_file_like\n    return _open_file(name_or_buffer, mode)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 426, in __init__\n    super().__init__(open(name, mode))\n                     ^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'yolo13n.pt'\n",
+            "duration_seconds": 0.7590930461883545,
+            "timestamp": "2025-06-26T21:48:14.423687"
+        },
+        "yolov13_flash": {
+            "success": false,
+            "model_version": "yolov13",
+            "attention_type": "flash",
+            "error": "[Errno 2] No such file or directory: 'yolo13n.pt'",
+            "traceback": "Traceback (most recent call last):\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/comprehensive_yolo_experiments.py\", line 390, in run_yolo_experiment\n    model = YOLO(config['model'])\n            ^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/models/yolo/model.py\", line 23, in __init__\n    super().__init__(model=model, task=task, verbose=verbose)\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/engine/model.py\", line 148, in __init__\n    self._load(model, task=task)\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/engine/model.py\", line 291, in _load\n    self.model, self.ckpt = attempt_load_one_weight(weights)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/nn/tasks.py\", line 914, in attempt_load_one_weight\n    ckpt, weight = torch_safe_load(weight)  # load ckpt\n                   ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/nn/tasks.py\", line 841, in torch_safe_load\n    ckpt = torch.load(file, map_location=\"cpu\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/yolov13-main/ultralytics/utils/patches.py\", line 86, in torch_load\n    return _torch_load(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 998, in load\n    with _open_file_like(f, 'rb') as opened_file:\n         ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 445, in _open_file_like\n    return _open_file(name_or_buffer, mode)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kennedy/miniconda3/envs/flash-attention/lib/python3.11/site-packages/torch/serialization.py\", line 426, in __init__\n    super().__init__(open(name, mode))\n                     ^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'yolo13n.pt'\n",
+            "duration_seconds": 0.6912577152252197,
+            "timestamp": "2025-06-26T21:48:20.305734"
+        }
+    },
+    "comparative_analysis": {
+        "timestamp": "2025-06-26T21:48:20.306101",
+        "successful_experiments": [
+            "yolov12_sdpa",
+            "yolov12_flash"
+        ],
+        "failed_experiments": [
+            "yolov13_sdpa",
+            "yolov13_flash"
+        ],
+        "model_comparison": {},
+        "attention_comparison": {
+            "sdpa_average": {
+                "mAP50": 0.7671974573088917,
+                "mAP50_95": 0.46130629823030944,
+                "duration_minutes": 55.30739711523056,
+                "memory_used_mb": 8394.328125,
+                "gpu_memory_used_gb": 0.218558464
+            },
+            "flash_average": {
+                "mAP50": 0.7653378494108363,
+                "mAP50_95": 0.47922176554342777,
+                "duration_minutes": 67.32496747175853,
+                "memory_used_mb": 3405.97265625,
+                "gpu_memory_used_gb": 0.05179852800000001
+            },
+            "winner": "sdpa",
+            "mAP_difference": 0.0018596078980553932,
+            "speed_difference_minutes": 12.017570356527969
+        },
+        "performance_ranking": [
+            {
+                "experiment": "yolov12_sdpa",
+                "mAP50": 0.7671974573088917,
+                "mAP50_95": 0.46130629823030944,
+                "duration_minutes": 55.30739711523056,
+                "memory_used_mb": 8394.328125,
+                "gpu_memory_used_gb": 0.218558464
+            },
+            {
+                "experiment": "yolov12_flash",
+                "mAP50": 0.7653378494108363,
+                "mAP50_95": 0.47922176554342777,
+                "duration_minutes": 67.32496747175853,
+                "memory_used_mb": 3405.97265625,
+                "gpu_memory_used_gb": 0.05179852800000001
+            }
+        ],
+        "recommendations": [
+            "Meilleure configuration: yolov12_sdpa",
+            "mAP50 optimale: 0.767",
+            "Dur\u00e9e d'entra\u00eenement: 55.3 minutes"
+        ]
+    },
+    "session_summary": {
+        "session_duration_minutes": 122.98757868333334,
+        "total_experiments": 4,
+        "successful_experiments": 2,
+        "failed_experiments": 2,
+        "validation_success": true,
+        "dataset_used": "/mnt/c/Users/kitok/Desktop/SmartFarm_OS/IA/YOLO12_FLASH_attn/Weeds-3",
+        "research_success": true
+    }
+}
+
+
+
+
+
+

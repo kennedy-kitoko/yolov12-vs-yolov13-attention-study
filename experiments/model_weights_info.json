@@ -1,0 +1,30 @@
+{
+    "yolov12_sdpa_best.pt": {
+        "size_mb": 5.5,
+        "map50": 0.767,
+        "parameters": "2.6M",
+        "path": "experiments/weights/yolov12_sdpa_best.pt",
+        "download_url": "https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/releases/download/v1.0/yolov12_sdpa_best.pt"
+    },
+    "yolov12_flash_best.pt": {
+        "size_mb": 5.5,
+        "map50": 0.765,
+        "parameters": "2.6M",
+        "path": "experiments/weights/yolov12_flash_best.pt",
+        "download_url": "https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/releases/download/v1.0/yolov12_flash_best.pt"
+    },
+    "yolov13_sdpa_best.pt": {
+        "size_mb": 5.4,
+        "map50": 0.829,
+        "parameters": "2.4M",
+        "path": "experiments/weights/yolov13_sdpa_best.pt",
+        "download_url": "https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/releases/download/v1.0/yolov13_sdpa_best.pt"
+    },
+    "yolov13_flash_best.pt": {
+        "size_mb": 5.4,
+        "map50": 0.823,
+        "parameters": "2.4M",
+        "path": "experiments/weights/yolov13_flash_best.pt",
+        "download_url": "https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/releases/download/v1.0/yolov13_flash_best.pt"
+    }
+}

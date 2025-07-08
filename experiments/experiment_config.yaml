@@ -1,0 +1,141 @@
+# Configuration expérimentale pour YOLOv12 vs YOLOv13 - SDPA vs Flash Attention
+# Kennedy Kitoko 🇨🇩 - Agricultural AI Innovation
+
+experiment_info:
+  title: "YOLOv12 vs YOLOv13 - SDPA vs Flash Attention Comparative Study"
+  researcher: "Kennedy Kitoko"
+  institution: "Agricultural AI Innovation Lab"
+  date: "2025-06-27"
+  version: "1.0"
+
+dataset:
+  name: "Weeds-3"
+  train_images: 3664
+  val_images: 359
+  classes: 1  # weed detection
+  path: "Weeds-3/data.yaml"
+
+hardware:
+  cpu: "AMD Ryzen 9 7945HX"
+  gpu: "NVIDIA RTX 4060"
+  ram_gb: 39
+  storage_gb: 899
+
+training_parameters:
+  epochs: 20  # Development mode
+  batch_size: 8
+  image_size: 640
+  optimizer: "AdamW"
+  learning_rate: 0.001
+  weight_decay: 0.0005
+  momentum: 0.937
+  warmup_epochs: 3
+  patience: 50
+  save_period: 25
+
+augmentation:
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 0.0
+  translate: 0.1
+  scale: 0.5
+  shear: 0.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.5
+  mosaic: 1.0
+  mixup: 0.1
+  copy_paste: 0.1
+
+attention_configurations:
+  sdpa:
+    name: "Scaled Dot-Product Attention"
+    version: "PyTorch 2.2.2 native"
+    memory_efficient: false
+    flash_enabled: false
+    
+  flash_attention:
+    name: "Flash Attention"
+    version: "2.7.3"
+    memory_efficient: true
+    flash_enabled: true
+    force_use: true
+
+model_configurations:
+  yolov12:
+    architecture: "YOLOv12-N"
+    weights: "models/yolo12n.pt"
+    features:
+      - "Area Attention (A2)"
+      - "R-ELAN blocks"
+      - "FlashAttention integration"
+      
+  yolov13:
+    architecture: "YOLOv13-N"
+    weights: "models/yolov13n.pt"
+    features:
+      - "HyperACE (Hypergraph attention)"
+      - "FullPAD (Full Paradigm of Adaptive Distribution)"
+      - "DS-Blocks (Depth-Separable Blocks)"
+
+experiments:
+  - name: "yolov12_sdpa"
+    model: "yolov12"
+    attention: "sdpa"
+    description: "YOLOv12 with SDPA attention"
+    
+  - name: "yolov12_flash"
+    model: "yolov12"
+    attention: "flash_attention"
+    description: "YOLOv12 with Flash Attention"
+    
+  - name: "yolov13_sdpa"
+    model: "yolov13"
+    attention: "sdpa"
+    description: "YOLOv13 with SDPA attention"
+    
+  - name: "yolov13_flash"
+    model: "yolov13"
+    attention: "flash_attention"
+    description: "YOLOv13 with Flash Attention"
+
+evaluation_metrics:
+  primary:
+    - "mAP50"
+    - "mAP50-95"
+  secondary:
+    - "precision"
+    - "recall"
+    - "f1_score"
+  efficiency:
+    - "training_time_minutes"
+    - "gpu_memory_gb"
+    - "cpu_memory_mb"
+    - "inference_time_ms"
+
+reproduction:
+  environment_file: "environment.yml"
+  requirements_file: "requirements.txt"
+  setup_commands:
+    - "conda env create -f environment.yml"
+    - "conda activate flash-attention"
+    - "pip install -r requirements.txt"
+  
+  run_commands:
+    - "python src/comprehensive_yolo_experiments.py"
+    - "python src/data_analysis.py"
+    - "python src/visualization.py"
+
+results_storage:
+  raw_results: "data/raw_results/"
+  processed_data: "data/processed/"
+  figures: "figures/"
+  models: "models/"
+  logs: "logs/"
+
+validation:
+  cross_validation: false
+  test_split: 0.2
+  random_seed: 42
+  deterministic: true 
