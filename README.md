@@ -37,23 +37,23 @@ This study presents the first comprehensive comparison between YOLOv12 and YOLOv
 
 | YOLOv12 + Flash | YOLOv12 + SDPA | YOLOv13 + Flash | YOLOv13 + SDPA |
 |:---------------:|:--------------:|:---------------:|:--------------:|
-| ![YOLOv12 Flash](examples/predictions/yolov12_flash_predictions.jpg) | ![YOLOv12 SDPA](examples/predictions/yolov12_sdpa_predictions.jpg) | ![YOLOv13 Flash](examples/predictions/yolov13_flash_predictions.jpg) | ![YOLOv13 SDPA](examples/predictions/yolov13_sdpa_predictions.jpg) |
+| ![YOLOv12 Flash](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov12_flash_predictions.jpg) | ![YOLOv12 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov12_sdpa_predictions.jpg) | ![YOLOv13 Flash](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_flash_predictions.jpg) | ![YOLOv13 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_sdpa_predictions.jpg) |
 
-### Exemples de courbes d'apprentissage
+### Comparaison mAP50
 
-- **Comparaison mAP50**  
-  ![Comparaison mAP50](figures/mAP_comparison.png)
+![Comparaison mAP50](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/figures/mAP_comparison.png)
 
-- **Courbes d'apprentissage (loss, précision, rappel)**  
-  ![Courbes d'apprentissage](figures/training_curves.png)
+### Courbes d'apprentissage
+
+![Courbes d'apprentissage](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/figures/training_curves.png)
 
 ### Comparaison des mécanismes d'attention
 
-- ![Comparaison Attention](figures/attention_comparison.png)
+![Comparaison Attention](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/figures/attention_comparison.png)
 
 ### Analyse de la mémoire
 
-- ![Analyse mémoire](figures/memory_usage.png)
+![Analyse mémoire](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/figures/memory_usage.png)
 
 ## 🏗️ Repository Structure
 
