@@ -37,7 +37,7 @@ This study presents the first comprehensive comparison between YOLOv12 and YOLOv
 
 | YOLOv12 + Flash | YOLOv12 + SDPA | YOLOv13 + Flash | YOLOv13 + SDPA |
 |:---------------:|:--------------:|:---------------:|:--------------:|
-| ![YOLOv12 Flash](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov12_flash_predictions.jpg) | ![YOLOv12 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov12_sdpa_predictions.jpg) | ![YOLOv13 Flash](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_flash_predictions.jpg) | ![YOLOv13 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_sdpa_predictions.jpg) |
+| ![YOLOv12 Flash](https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/blob/main/figures/mAP50_comparison.png) | ![YOLOv12 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov12_sdpa_predictions.jpg) | ![YOLOv13 Flash](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_flash_predictions.jpg) | ![YOLOv13 SDPA](https://raw.githubusercontent.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study/main/examples/predictions/yolov13_sdpa_predictions.jpg) |
 
 ### Comparaison mAP50
 
