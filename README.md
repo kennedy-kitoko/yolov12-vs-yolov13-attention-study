@@ -9,7 +9,7 @@
 
 **Authors:** Kennedy Kitoko 🇨🇩  
 **Institution:** BEIJING INSTITUT OF TECHNOLOGI  
-**Date:** June 2025
+**Date:** 26 June 2025
 
 ## 🎯 Abstract
 
