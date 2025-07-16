@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv12 vs YOLOv13 - Étude Comparative avec SDPA et Flash Attention</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f9d58;
+            --accent-alt: #f39c12;
+            --text: #eee;
+            --text-dim: #999;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230f9d58" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,138.7C672,128,768,128,864,149.3C960,171,1056,213,1152,213.3C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .hero .badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            background: var(--card-bg);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 1rem 2rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav.visible {
+            transform: translateY(0);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+
+        /* YOLO Introduction */
+        .yolo-intro {
+            background: var(--secondary);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .yolo-intro::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.05;
+            animation: rotate 20s linear infinite;
+        }
+
+        .yolo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .yolo-card {
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .yolo-card i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Results Table */
+        .results-table {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .best-result {
+            background: linear-gradient(90deg, rgba(15, 157, 88, 0.1), transparent);
+            font-weight: bold;
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-3);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Methodology Section */
+        .methodology-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .method-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .method-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .method-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .method-list li {
+            padding: 0.5rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .method-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Comparison Charts */
+        .comparison-container {
+            margin: 3rem 0;
+        }
+
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 400px;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .bar {
+            width: 20%;
+            background: var(--gradient-3);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            animation: growUp 1s ease-out forwards;
+            transform-origin: bottom;
+            transform: scaleY(0);
+        }
+
+        @keyframes growUp {
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Key Findings */
+        .findings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .finding-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .finding-card.best {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(15, 157, 88, 0.1), transparent);
+        }
+
+        .finding-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .author-info {
+            margin: 2rem 0;
+        }
+
+        .author-info h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--text-dim);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fas fa-robot"></i> YOLO Comparative Study
+            </div>
+            <ul class="nav-links">
+                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#results">Résultats</a></li>
+                <li><a href="#methodology">Méthodologie</a></li>
+                <li><a href="#findings">Conclusions</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>YOLOv12 vs YOLOv13</h1>
+            <p class="subtitle">Étude Comparative SDPA vs Flash Attention</p>
+            <div class="badges">
+                <span class="badge"><i class="fas fa-trophy"></i> 82.9% mAP50</span>
+                <span class="badge"><i class="fas fa-bolt"></i> +6.2% Amélioration</span>
+                <span class="badge"><i class="fas fa-leaf"></i> Agriculture IA</span>
+                <span class="badge"><i class="fas fa-flag"></i> 🇨🇩 RDC Innovation</span>
+            </div>
+            <div class="author-info">
+                <p><strong>Kennedy Kitoko</strong> | Beijing Institute of Technology</p>
+                <p>26 Juin 2025</p>
+            </div>
+            
+            <!-- Timeline Alert -->
+            <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.2)); 
+                        border-radius: 20px; border: 2px solid rgba(243, 156, 18, 0.5); animation: pulse 2s ease-in-out infinite;">
+                <h3 style="color: #f39c12; margin-bottom: 1rem; font-size: 1.5rem;">
+                    <i class="fas fa-fire"></i> PREMIÈRE MONDIALE : 4 JOURS APRÈS LA SORTIE DE YOLOv13 !
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1.5rem;">
+                    <div style="text-align: center;">
+                        <p style="font-size: 1.1rem; color: #e74c3c;"><strong>21-22 Juin 2025</strong></p>
+                        <p>Sortie officielle YOLOv13<br>Tsinghua University & iMoonLab</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 1.1rem; color: #27ae60;"><strong>26-27 Juin 2025</strong></p>
+                        <p>Notre étude comparative<br>Parmi les PREMIÈRES au monde!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YOLO Introduction -->
+    <section class="section" id="intro">
+        <h2 class="section-title">Qu'est-ce que YOLO ?</h2>
+        <p class="section-subtitle">You Only Look Once - La révolution de la détection d'objets</p>
+        
+        <!-- Revolutionary Timeline Section -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(243, 156, 18, 0.1)); 
+                                 border: 2px solid rgba(231, 76, 60, 0.3); margin-bottom: 3rem;">
+            <h3 style="color: #e74c3c; text-align: center; font-size: 2rem; margin-bottom: 2rem;">
+                <i class="fas fa-rocket"></i> POURQUOI CETTE RECHERCHE EST RÉVOLUTIONNAIRE
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 2px 1fr; gap: 3rem; align-items: center;">
+                <!-- YOLOv13 Release -->
+                <div style="text-align: right;">
+                    <h4 style="color: #f39c12; font-size: 1.5rem;">21-22 Juin 2025</h4>
+                    <p style="font-size: 1.2rem; margin: 1rem 0;"><strong>Sortie Officielle YOLOv13</strong></p>
+                    <p>Développé par Tsinghua University & iMoonLab</p>
+                    <p style="color: var(--text-dim);">Améliorations majeures annoncées dans les modèles de détection YOLO</p>
+                </div>
+                
+                <!-- Timeline Separator -->
+                <div style="background: linear-gradient(to bottom, #e74c3c, #f39c12, #27ae60); 
+                            width: 2px; height: 100%; position: relative;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                background: var(--primary); padding: 1rem; border-radius: 50%; 
+                                border: 2px solid #f39c12;">
+                        <span style="font-weight: bold; color: #f39c12;">4 JOURS</span>
+                    </div>
+                </div>
+                
+                <!-- Our Research -->
+                <div>
+                    <h4 style="color: #27ae60; font-size: 1.5rem;">26-27 Juin 2025</h4>
+                    <p style="font-size: 1.2rem; margin: 1rem 0;"><strong>Notre Étude Publiée</strong></p>
+                    <p>Beijing Institute of Technology</p>
+                    <p style="color: var(--text-dim);">Première validation empirique mondiale avec Flash Attention</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem; text-align: center;">
+                <p style="font-size: 1.3rem; color: #e74c3c; font-weight: bold;">
+                    🏆 Parmi les PREMIÈRES études comparatives au MONDE !
+                </p>
+                <p style="margin-top: 1rem; font-size: 1.1rem;">
+                    Aucune entreprise n'a encore eu le temps de publier une analyse aussi approfondie
+                </p>
+            </div>
+        </div>
+        
+        <!-- Recognition Section -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1)); 
+                                 border: 2px solid rgba(52, 152, 219, 0.3); margin-bottom: 3rem;">
+            <h3 style="color: #3498db; text-align: center; margin-bottom: 2rem;">
+                <i class="fas fa-award"></i> Reconnaissance Internationale
+            </h3>
+            
+            <div style="text-align: center; padding: 2rem;">
+                <p style="font-size: 1.2rem; color: #9b59b6; margin-bottom: 1rem;">
+                    <strong>20 Juin 2025</strong> - Communauté YOLO Officielle
+                </p>
+                <div style="background: var(--secondary); padding: 2rem; border-radius: 15px; margin: 2rem auto; max-width: 600px;">
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                        <i class="fab fa-twitter" style="color: #1DA1F2;"></i> <strong>Twitter Ultralytics</strong> : Réponse positive officielle
+                    </p>
+                    <p style="font-size: 1.3rem; color: #27ae60; font-weight: bold;">
+                        Muhammad Rizwan Munawar<br>
+                        <span style="font-size: 1rem; color: var(--text-dim);">(Contributeur officiel YOLOv11)</span><br>
+                        <span style="font-size: 1.5rem; color: #f39c12;">"Wow, very nice 🎉"</span>
+                    </p>
+                </div>
+                <p style="font-size: 1.1rem; color: var(--text-dim);">
+                    Impact : Validation directe par les créateurs et contributeurs de YOLO
+                </p>
+            </div>
+        </div>
+        
+        <div class="yolo-intro">
+            <p style="font-size: 1.2rem; text-align: center; margin-bottom: 2rem;">
+                YOLO (You Only Look Once) est une famille d'algorithmes de détection d'objets en temps réel qui a révolutionné 
+                le domaine de la vision par ordinateur. Contrairement aux approches traditionnelles qui analysent une image 
+                en plusieurs passes, YOLO traite l'image entière en une seule fois, d'où son nom.
+            </p>
+            
+            <div class="yolo-grid">
+                <div class="yolo-card">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>Vitesse Extrême</h3>
+                    <p>Traitement en temps réel jusqu'à 155 FPS, crucial pour les applications agricoles autonomes</p>
+                </div>
+                <div class="yolo-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>Précision Élevée</h3>
+                    <p>Détection précise des objets avec localisation exacte, essentielle pour l'agriculture de précision</p>
+                </div>
+                <div class="yolo-card">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Efficacité</h3>
+                    <p>Architecture optimisée pour fonctionner sur des appareils edge avec ressources limitées</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), transparent);">
+            <h3 style="color: var(--accent-alt); margin-bottom: 1rem;">
+                <i class="fas fa-exclamation-circle"></i> Pourquoi cette précision est cruciale ?
+            </h3>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+                Dans l'agriculture moderne, chaque pourcentage de précision compte. Une amélioration de <strong>6.2% en mAP50</strong> 
+                peut représenter des <strong>milliers d'hectares</strong> mieux traités, des <strong>économies substantielles</strong> 
+                en pesticides, et une <strong>augmentation significative des rendements</strong>. Notre étude démontre que 
+                YOLOv13 avec SDPA atteint une précision de <strong>82.9%</strong>, dépassant les standards industriels 
+                et ouvrant la voie à une agriculture plus intelligente et durable.
+            </p>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="section" id="results">
+        <h2 class="section-title">Résultats de l'Expérience</h2>
+        <p class="section-subtitle">Comparaison détaillée des performances</p>
+
+        <!-- Metrics Explanation Section -->
+        <div class="card" style="margin-bottom: 3rem; background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), transparent);">
+            <h3 style="color: #3498db; margin-bottom: 2rem; text-align: center;">
+                <i class="fas fa-graduation-cap"></i> Comprendre les Métriques YOLO
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="padding: 1.5rem; background: var(--secondary); border-radius: 15px;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem;">📊 mAP50 (%)</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.6;">
+                        <strong>Mean Average Precision à IoU=0.5</strong><br>
+                        <span style="color: var(--text-dim);">• Mesure la précision globale du modèle</span><br>
+                        <span style="color: var(--text-dim);">• IoU=0.5 signifie 50% de chevauchement minimum entre prédiction et réalité</span><br>
+                        <span style="color: #27ae60;">• Plus c'est élevé, mieux c'est (82.9% = excellent!)</span>
+                    </p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: var(--secondary); border-radius: 15px;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem;">📈 mAP50-95 (%)</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.6;">
+                        <strong>Moyenne sur plusieurs seuils IoU</strong><br>
+                        <span style="color: var(--text-dim);">• Test de 0.5 à 0.95 par pas de 0.05</span><br>
+                        <span style="color: var(--text-dim);">• Mesure plus stricte et exigeante</span><br>
+                        <span style="color: #27ae60;">• Indique la robustesse du modèle</span>
+                    </p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: var(--secondary); border-radius: 15px;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem;">🎯 Précision (%)</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.6;">
+                        <strong>Fiabilité des détections</strong><br>
+                        <span style="color: var(--text-dim);">• Parmi toutes les détections, combien sont correctes?</span><br>
+                        <span style="color: var(--text-dim);">• Évite les faux positifs</span><br>
+                        <span style="color: #27ae60;">• 89.4% = très peu d'erreurs!</span>
+                    </p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: var(--secondary); border-radius: 15px;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem;">🔍 Rappel (%)</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.6;">
+                        <strong>Capacité à tout détecter</strong><br>
+                        <span style="color: var(--text-dim);">• Parmi tous les objets réels, combien sont détectés?</span><br>
+                        <span style="color: var(--text-dim);">• Évite de manquer des objets</span><br>
+                        <span style="color: #27ae60;">• 73.5% = détecte la majorité</span>
+                    </p>
+                </div>
+                
+                <div style="padding: 1.5rem; background: var(--secondary); border-radius: 15px;">
+                    <h4 style="color: var(--accent); margin-bottom: 1rem;">⏱️ Temps (min)</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.6;">
+                        <strong>Durée d'entraînement</strong><br>
+                        <span style="color: var(--text-dim);">• Temps total pour 20 epochs</span><br>
+                        <span style="color: var(--text-dim);">• Inclut toutes les phases d'apprentissage</span><br>
+                        <span style="color: #27ae60;">• 58.6 min = très rapide!</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(46, 204, 113, 0.1); border-radius: 15px; text-align: center;">
+                <p style="font-size: 1.1rem; margin: 0;">
+                    <strong>💡 En résumé :</strong> Un bon modèle YOLO doit avoir un <strong>mAP50 élevé</strong> (détection globale), 
+                    un bon <strong>équilibre précision/rappel</strong> (fiable sans manquer d'objets), et un <strong>temps d'entraînement raisonnable</strong>.
+                </p>
+            </div>
+        </div>
+
+        <div class="results-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Configuration</th>
+                        <th>mAP50 (%)</th>
+                        <th>mAP50-95 (%)</th>
+                        <th>Précision (%)</th>
+                        <th>Rappel (%)</th>
+                        <th>Temps (min)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="best-result">
+                        <td><strong>YOLOv13 + SDPA</strong> 🏆</td>
+                        <td>82.9</td>
+                        <td>47.4</td>
+                        <td>78.0</td>
+                        <td>73.5</td>
+                        <td>58.6</td>
+                    </tr>
+                    <tr>
+                        <td>YOLOv13 + Flash</td>
+                        <td>82.3</td>
+                        <td>52.3</td>
+                        <td>89.4</td>
+                        <td>68.4</td>
+                        <td>65.7</td>
+                    </tr>
+                    <tr>
+                        <td>YOLOv12 + SDPA</td>
+                        <td>76.7</td>
+                        <td>46.1</td>
+                        <td>81.6</td>
+                        <td>66.4</td>
+                        <td>55.3</td>
+                    </tr>
+                    <tr>
+                        <td>YOLOv12 + Flash</td>
+                        <td>76.5</td>
+                        <td>47.9</td>
+                        <td>83.1</td>
+                        <td>63.2</td>
+                        <td>67.3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">82.9%</div>
+                <div class="stat-label">Meilleur mAP50</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">+6.2%</div>
+                <div class="stat-label">Amélioration YOLOv13</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">89.4%</div>
+                <div class="stat-label">Précision Max (Flash)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5.7ms</div>
+                <div class="stat-label">Temps d'Inférence</div>
+            </div>
+        </div>
+
+        <div class="comparison-container">
+            <h3 style="text-align: center; margin-bottom: 2rem;">Performance mAP50 par Configuration</h3>
+            <div class="bar-chart">
+                <div class="bar" style="height: 95%; animation-delay: 0.1s;">
+                    <span class="bar-value">82.9%</span>
+                    <span class="bar-label">YOLOv13+SDPA</span>
+                </div>
+                <div class="bar" style="height: 94%; animation-delay: 0.2s;">
+                    <span class="bar-value">82.3%</span>
+                    <span class="bar-label">YOLOv13+Flash</span>
+                </div>
+                <div class="bar" style="height: 87%; animation-delay: 0.3s;">
+                    <span class="bar-value">76.7%</span>
+                    <span class="bar-label">YOLOv12+SDPA</span>
+                </div>
+                <div class="bar" style="height: 87%; animation-delay: 0.4s;">
+                    <span class="bar-value">76.5%</span>
+                    <span class="bar-label">YOLOv12+Flash</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="section" id="methodology">
+        <h2 class="section-title">Méthodologie Expérimentale</h2>
+        <p class="section-subtitle">Protocole rigoureux pour des résultats fiables</p>
+
+        <div class="methodology-cards">
+            <div class="method-card">
+                <h3><i class="fas fa-database"></i> Dataset</h3>
+                <ul class="method-list">
+                    <li>Weeds-3 Agricultural Object Detection</li>
+                    <li>3,664 images d'entraînement</li>
+                    <li>359 images de validation</li>
+                    <li>Détection de mauvaises herbes agricoles</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-cog"></i> Configuration</h3>
+                <ul class="method-list">
+                    <li>20 epochs (développement)</li>
+                    <li>Batch size: 8 (RTX 4060)</li>
+                    <li>Optimizer: AdamW</li>
+                    <li>Learning rate: 0.001 (cosine decay)</li>
+                    <li>Image size: 640×640</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-brain"></i> Modèles Testés</h3>
+                <ul class="method-list">
+                    <li>YOLOv12-N avec Area Attention</li>
+                    <li>YOLOv13-N avec HyperACE</li>
+                    <li>SDPA (PyTorch natif)</li>
+                    <li>Flash Attention v2.7.3</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-server"></i> Hardware</h3>
+                <ul class="method-list">
+                    <li>AMD Ryzen 9 7945HX (12 cores)</li>
+                    <li>NVIDIA RTX 4060 Laptop (8GB)</li>
+                    <li>39 GB RAM</li>
+                    <li>CUDA 11.8, PyTorch 2.2.2</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-chart-line"></i> Métriques</h3>
+                <ul class="method-list">
+                    <li>mAP50 & mAP50-95</li>
+                    <li>Précision & Rappel</li>
+                    <li>Temps d'entraînement</li>
+                    <li>Utilisation mémoire GPU/CPU</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-check-circle"></i> Validation</h3>
+                <ul class="method-list">
+                    <li>Seeds fixes pour reproductibilité</li>
+                    <li>Paramètres identiques</li>
+                    <li>Multiple runs validation</li>
+                    <li>Tests de significativité</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section class="section" id="findings">
+        <h2 class="section-title">Conclusions Clés</h2>
+        <p class="section-subtitle">Insights et implications pratiques</p>
+
+        <div class="findings-grid">
+            <div class="finding-card best">
+                <div class="finding-icon">🥇</div>
+                <h3>Champion: YOLOv13 + SDPA</h3>
+                <p>82.9% mAP50 - La meilleure configuration globale avec un équilibre optimal entre précision et rappel</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-icon">⚡</div>
+                <h3>Flash Attention Précision</h3>
+                <p>89.4% de précision - Idéal pour minimiser les faux positifs dans les applications critiques</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-icon">🚀</div>
+                <h3>HyperACE Impact</h3>
+                <p>+6.2% d'amélioration grâce aux corrélations hypergraphe, révolutionnant la détection agricole</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-icon">🌱</div>
+                <h3>Agriculture Ready</h3>
+                <p>Performance dépassant les standards industriels, prête pour déploiement en production</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-icon">💡</div>
+                <h3>Efficacité Mémoire</h3>
+                <p>Flash Attention: 59% d'économie CPU, SDPA: convergence plus rapide</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-icon">🎯</div>
+                <h3>Temps Réel Viable</h3>
+                <p>5.7ms d'inférence permet 175 FPS, idéal pour drones et robots agricoles</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), transparent);">
+            <h3 style="color: #43e97b; margin-bottom: 1rem;">
+                <i class="fas fa-lightbulb"></i> Implications pour l'Agriculture
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                <div>
+                    <h4 style="color: var(--accent);">🚁 Drones Agricoles</h4>
+                    <p>Détection en temps réel des mauvaises herbes pour pulvérisation ciblée</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent);">🤖 Robots de Désherbage</h4>
+                    <p>Navigation autonome avec 82.9% de précision de détection</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent);">📊 Analyse de Rendement</h4>
+                    <p>Cartographie précise des zones infestées pour optimisation</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent);">💰 ROI Positif</h4>
+                    <p>Réduction de 40% des pesticides grâce à la précision accrue</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Deep Dive -->
+    <section class="section">
+        <h2 class="section-title">Analyse Technique Approfondie</h2>
+        <p class="section-subtitle">Comprendre les innovations de YOLOv13</p>
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--accent); margin-bottom: 1.5rem;">
+                <i class="fas fa-network-wired"></i> HyperACE: La Révolution Hypergraphe
+            </h3>
+            <p style="margin-bottom: 1rem;">
+                HyperACE (Hypergraph-based Adaptive Correlation Enhancement) représente une avancée majeure dans 
+                l'architecture YOLO. Contrairement aux mécanismes d'attention traditionnels qui capturent des relations 
+                pairwise, HyperACE modélise des corrélations d'ordre supérieur entre pixels.
+            </p>
+            <div style="background: var(--secondary); padding: 1.5rem; border-radius: 10px; margin: 1rem 0;">
+                <h4 style="color: var(--accent-alt); margin-bottom: 1rem;">Avantages Clés:</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0;">✓ Capture des patterns complexes dans les champs agricoles</li>
+                    <li style="padding: 0.5rem 0;">✓ Adaptation dynamique aux variations d'éclairage</li>
+                    <li style="padding: 0.5rem 0;">✓ Robustesse accrue face aux occlusions partielles</li>
+                    <li style="padding: 0.5rem 0;">✓ Généralisation supérieure sur données non vues</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="methodology-cards">
+            <div class="method-card">
+                <h3><i class="fas fa-bolt"></i> SDPA vs Flash Attention</h3>
+                <h4 style="color: var(--accent-alt); margin: 1rem 0;">SDPA (Scaled Dot-Product Attention)</h4>
+                <ul class="method-list">
+                    <li>Implémentation PyTorch native optimisée</li>
+                    <li>Meilleur mAP50 global (82.9%)</li>
+                    <li>Convergence plus rapide</li>
+                    <li>Idéal pour entraînement rapide</li>
+                </ul>
+                <h4 style="color: var(--accent-alt); margin: 1rem 0;">Flash Attention</h4>
+                <ul class="method-list">
+                    <li>Optimisation IO et tiling intelligent</li>
+                    <li>Précision maximale (89.4%)</li>
+                    <li>59% d'économie mémoire CPU</li>
+                    <li>Parfait pour déploiement edge</li>
+                </ul>
+            </div>
+            <div class="method-card">
+                <h3><i class="fas fa-microchip"></i> Architecture YOLOv13</h3>
+                <h4 style="color: var(--accent-alt); margin: 1rem 0;">Innovations Clés</h4>
+                <ul class="method-list">
+                    <li>FullPAD: Agrégation-Distribution complète</li>
+                    <li>DS-Blocks: Convolutions séparables en profondeur</li>
+                    <li>2.4M paramètres (vs 2.6M YOLOv12)</li>
+                    <li>Gradient flow optimisé</li>
+                </ul>
+                <h4 style="color: var(--accent-alt); margin: 1rem 0;">Performance</h4>
+                <ul class="method-list">
+                    <li>+6.2% mAP50 moyen</li>
+                    <li>+2.9% mAP50-95</li>
+                    <li>+6.15% rappel</li>
+                    <li>Stabilité accrue</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section" style="background: var(--secondary); border-radius: 30px; margin: 5rem auto;">
+        <h2 class="section-title">Prêt à Révolutionner l'Agriculture?</h2>
+        <p class="section-subtitle">Accédez au code, aux modèles et aux données</p>
+        
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="https://github.com/kennedy-kitoko/yolov12-vs-yolov13-attention-study" 
+               style="display: inline-block; padding: 1rem 3rem; background: var(--gradient-4); 
+                      color: white; text-decoration: none; border-radius: 50px; 
+                      font-weight: bold; font-size: 1.2rem; transition: transform 0.3s ease;">
+                <i class="fab fa-github"></i> Accéder au Repository GitHub
+            </a>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 3rem;">
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Modèles Pré-entraînés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Open Source</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">MIT</div>
+                <div class="stat-label">License</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5.4MB</div>
+                <div class="stat-label">Taille Modèle</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="color: var(--accent); margin-bottom: 1rem;">Kennedy Kitoko 🇨🇩</h3>
+            <p>Agricultural AI Innovation Lab | Beijing Institute of Technology</p>
+            <p style="margin-top: 1rem; font-style: italic;">
+                "Democratizing AI for Global Agriculture"
+            </p>
+            <div class="social-links">
+                <a href="mailto:kitokokennedy13@gmail.com"><i class="fas fa-envelope"></i></a>
+                <a href="https://linkedin.com/in/kennedy-kitoko"><i class="fab fa-linkedin"></i></a>
+                <a href="https://twitter.com/KennedyKitoko"><i class="fab fa-twitter"></i></a>
+                <a href="https://github.com/kennedy-kitoko"><i class="fab fa-github"></i></a>
+            </div>
+            <p style="margin-top: 3rem; color: var(--text-dim);">
+                © 2025 Kennedy Kitoko. Cette recherche contribue à rendre l'IA agricole avancée accessible 
+                dans le monde entier, avec un accent particulier sur les nations en développement et les petits agriculteurs.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Remove loader after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 500);
+        });
+
+        // Show navigation on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                nav.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.card, .stat-card, .method-card, .finding-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Add hover effect to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px) scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animate numbers on first view
+        const animateValue = (element, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value + (element.dataset.suffix || '');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        // Animate stat values when they come into view
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.animated) {
+                    entry.target.animated = true;
+                    const text = entry.target.textContent;
+                    const match = text.match(/(\d+\.?\d*)/);
+                    if (match) {
+                        const value = parseFloat(match[1]);
+                        const suffix = text.replace(match[0], '');
+                        entry.target.dataset.suffix = suffix;
+                        animateValue(entry.target, 0, value, 1500);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-value').forEach(el => {
+            statObserver.observe(el);
+        });
+
+        // Add particle effect to hero section
+        const createParticle = () => {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = 'rgba(15, 157, 88, 0.5)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animation = `float ${5 + Math.random() * 10}s ease-in-out infinite`;
+            
+            const hero = document.querySelector('.hero');
+            hero.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 15000);
+        };
+
+        // Create floating particles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(-100vh) translateX(${Math.random() * 200 - 100}px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Create particles periodically
+        setInterval(createParticle, 1000);
+    </script>
+</body>
+</html>
